@@ -7,14 +7,13 @@ import {
 import Header from "./Header";
 import { checkValidData } from "../utils/validate";
 import { auth } from "../utils/firebase";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { USER_AVATAR } from "../utils/constants";
 
 const Login = () => {
   const [isSignIn, setIsSignIn] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const email = useRef(null);
   const password = useRef(null);
@@ -38,14 +37,12 @@ const Login = () => {
         .then((userCredential) => {
           const { uid, email, displayName, photoURL } = auth.currentUser;
 
-          updateProfile(auth.currentUser, {
+          updateProfile(auth, {
             displayName: name.current.value,
-            photoURL:
-              "https://m.media-amazon.com/images/G/01/CST/Prism/Avatars/img_profile_avatar_moods_sleepy_circ.png",
+            photoURL: USER_AVATAR,
           })
             .then(() => {
               dispatch(addUser({ uid, email, displayName, photoURL }));
-              navigate("/browse");
             })
             .catch((error) => {
               const errorCode = error.code;
@@ -67,7 +64,6 @@ const Login = () => {
       )
         .then((userCredential) => {
           const user = userCredential.user;
-          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
